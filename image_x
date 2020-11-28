@@ -41,7 +41,7 @@ Usage:
 
 Options:
   -o OUTPUT     Output file.
-  -d            Read images from the <input> dir and make OUTPUT dir if needed.
+  -d            Read images from the <input> dir and write the results into OUTPUT dir, which will be generated if needed.
 """.format(argv0=os.path.basename(sys.argv[0]))
 
 

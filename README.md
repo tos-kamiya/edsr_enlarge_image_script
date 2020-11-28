@@ -1,6 +1,7 @@
 ## EDSR enlarge-image script
 
 A helper script to enlarge image files with the [EDSR](https://github.com/Saafke/EDSR_Tensorflow) model.
+
 ## Requirements
 
 * Tensorflow
