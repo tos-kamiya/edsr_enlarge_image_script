@@ -6,6 +6,7 @@ A helper script to enlarge image files with the [EDSR](https://github.com/Saafke
 * Tensorflow
 * OpenCV + contrib
 * EDSR model
+* docopt
 
 ```sh
 pip3 install tensorflow-cpu  # or tensorflow-gpu, depending on your environmnet
@@ -14,7 +15,9 @@ pip3 install tensorflow-cpu  # or tensorflow-gpu, depending on your environmnet
 ```sh
 pip3 install opencv-python
 pip3 install opencv-contrib-python
+pip3 install docopt
 ```
+
 Download model files (`EDSR_x2.pb`, `EDSR_x3.pb`, `EDSR_x4.pb`) from:
 
 https://github.com/Saafke/EDSR_Tensorflow
