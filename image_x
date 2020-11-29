@@ -3,6 +3,7 @@
 import os
 import sys
 
+# import tensorflow as tf  # Use GPU
 import cv2
 from cv2 import dnn_superres
 
@@ -18,6 +19,11 @@ def gen_sr(scale):
     path = os.path.join(_script_dir, "EDSR_x%d.pb" % scale)
     sr.readModel(path)
     sr.setModel("edsr", scale)
+    
+    # Use GPU
+    # if tf.test.is_gpu_available():
+    #     sr.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+    #     sr.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
     return sr
 

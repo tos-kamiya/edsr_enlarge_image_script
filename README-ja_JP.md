@@ -10,11 +10,7 @@
 * docopt
 
 ```sh
-pip3 install tensorflow-cpu  # あるいは tensorflow-gpu （環境によって選んでください）
-```
-
-```sh
-pip3 install opencv-python
+pip3 install tensorflow-cpupip3 install opencv-python
 pip3 install opencv-contrib-python
 pip3 install docopt
 ```
@@ -24,6 +20,8 @@ pip3 install docopt
 https://github.com/Saafke/EDSR_Tensorflow
 
 `image_x`スクリプトを置いているディレクトリにコピーしてください。
+
+**注意** スクリプトをcuDNN+Cuda+Nvidia GPUの環境で動かしたいときは、OpenCVをNvidia GPU向けにセットアップする必要があります。OpenCVレポジトリの[関連するイシュー](https://github.com/opencv/opencv/issues/15858)を参考にしてください。
 
 ## 利用方法
 
