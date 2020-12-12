@@ -12,6 +12,15 @@ from docopt import docopt
 
 _script_dir = os.path.dirname(os.path.realpath(__file__))
 
+# https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html?highlight=imread#imread
+IMAGE_EXTENSIONS = [
+    ".bmp", ".dib",
+    ".jpeg", ".jpg", ".jpe",
+    ".png",
+    ".pbm", ".pgm", ".ppm",
+    ".sr", ".ras",
+]
+
 
 def gen_sr(scale):
     sr = dnn_superres.DnnSuperResImpl_create()
@@ -74,6 +83,8 @@ def main():
             os.mkdir(output_dir)
 
         files = os.listdir(input_dir)
+        files = [f for f in files if os.path.splitext(f)[1] in IMAGE_EXTENSIONS]
+        files.sort()
         for f in files:
             input_file = os.path.join(input_dir, f)
             output_file = os.path.join(output_dir, f)
