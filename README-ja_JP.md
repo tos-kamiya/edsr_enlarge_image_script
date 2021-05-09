@@ -10,7 +10,8 @@
 * docopt
 
 ```sh
-pip3 install tensorflow-cpupip3 install opencv-python
+pip3 install tensorflow-cpu
+pip3 install opencv-python
 pip3 install opencv-contrib-python
 pip3 install docopt
 ```

@@ -12,6 +12,19 @@ from docopt import docopt
 
 _script_dir = os.path.dirname(os.path.realpath(__file__))
 
+
+# reference: https://stackoverflow.com/questions/7099290/how-to-ignore-hidden-files-using-os-listdir
+
+if os.name == 'nt':
+    import win32api, win32con
+
+    def is_hidden_file(p):
+        attribute = win32api.GetFileAttributes(p)
+        return attribute & (win32con.FILE_ATTRIBUTE_HIDDEN | win32con.FILE_ATTRIBUTE_SYSTEM)
+else:
+    def is_hidden_file(p):
+        return p.startswith('.') #linux-osx
+
 # https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html?highlight=imread#imread
 IMAGE_EXTENSIONS = [
     ".bmp", ".dib",
@@ -51,12 +64,13 @@ def mod_path(p, suffix):
 __doc__ = """Enlarge images.
 
 Usage:
-  {argv0} <scale> <input> [-o OUTPUT]
-  {argv0} <scale> -d <input> [-o OUTPUT]
+  {argv0} <scale> [options] <input> [-o OUTPUT]
 
 Options:
   -o OUTPUT     Output file.
   -d            Read images from the <input> dir and write the results into OUTPUT dir, which will be generated if needed.
+  -c            Skip when output file already exists.
+  --verbose     Verbose mode.
 """.format(argv0=os.path.basename(sys.argv[0]))
 
 
@@ -69,11 +83,29 @@ def main():
     input_file = args['<input>']
     output_file = args['-o']
     option_dir = args['-d']
+    opiton_continue = args['-c']
+    option_verbose = args['--verbose']
+
+    if output_file and input_file == output_file:
+        sys.exit("Error: output is the same as input")
+
+    def do_sr_apply(sr, input_file, output_file):
+        if opiton_continue and os.path.exists(output_file):
+            print("> skipped: %s" % input_file, file=sys.stderr)
+            return
+        if option_verbose:
+            print("> processing: %s" % input_file, file=sys.stderr)
+        try:
+            sr_apply(sr, input_file, output_file)
+        except cv2.error as e:
+            print("File: %s, %s" % (input_file, e), file=sys.stderr)
+            sys.exit(1)
 
     sr = gen_sr(scale)
 
     if option_dir:
-        assert os.path.isdir(input_file)
+        if not os.path.isdir(input_file):
+            sys.exit("Error: option -d expects a directory as input")
         input_dir = input_file
         if not output_file:
             output_dir = mod_path(input_dir, "-x%d" % scale)
@@ -82,18 +114,20 @@ def main():
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
 
-        files = os.listdir(input_dir)
-        files = [f for f in files if os.path.splitext(f)[1] in IMAGE_EXTENSIONS]
+        files = [f for f in os.listdir(input_dir) \
+                if f.endswith(tuple(IMAGE_EXTENSIONS)) and not is_hidden_file(f)]
         files.sort()
+
         for f in files:
             input_file = os.path.join(input_dir, f)
             output_file = os.path.join(output_dir, f)
-            sr_apply(sr, input_file, output_file)
+            do_sr_apply(sr, input_file, output_file)
     else:
-        assert os.path.isfile(input_file)
+        if os.path.isdir(input_file):
+            sys.exit("Error: input is a directory, not a file. Consider using option -d")
         if not output_file:
             output_file = mod_path(input_file, "-x%d" % scale)
-        sr_apply(sr, input_file, output_file)
+        do_sr_apply(sr, input_file, output_file)
 
 
 if __name__ == '__main__':
